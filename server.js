@@ -1,10 +1,18 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const fs = require('firebase-admin');
+const serviceAccount = require('./admin.json')
 const contactlist = require('./Component/ContactList/ContactControl')
-
-
 const helmet = require('helmet');
+
+
+fs.initializeApp({
+    Credential: fs.Credential.cert(serviceAccount)
+})
+const db = fs.firestore();
+
+
 const server = express();
 
 
