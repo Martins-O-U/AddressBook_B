@@ -4,6 +4,8 @@ const port = process.env.PORT || 4100
 const compression = require('compression')
 const path = require('path');
 const app = express()
+const cors = require('cors');
+const helmet = require('helmet');
 const contact = require('./Component/ContactList/ContactControl')
 
 
@@ -13,6 +15,10 @@ app.use(express.json());
 // view engine setup
 app.set('views', path.join(__dirname, 'static', 'views'))
 app.set('view engine', 'ejs')
+
+app.use(cors())
+app.use(helmet());
+
 app.use(compression())
 app.use('/public', express.static(path.join(__dirname, 'static', 'public')))
 
