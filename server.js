@@ -16,7 +16,7 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'static', 'views'))
 app.set('view engine', 'ejs')
 
-server.use(
+app.use(
     cors({
         origin: '*',
         methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
