@@ -2,11 +2,8 @@ require('dotenv').config()
 const express=require('express')
 const port = process.env.PORT || 4100
 const compression = require('compression')
-// const saltedMd5 = require('salted-md5')
 const path = require('path');
 const app = express()
-// const multer = require('multer')
-// const upload = multer({storage: multer.memoryStorage()})
 const contact = require('./Component/ContactList/ContactControl')
 
 
@@ -24,14 +21,7 @@ app.use('/api', contact)
 let admin = require("firebase-admin");
 app.locals.bucket = admin.storage().bucket()
 
-// let serviceAccount = require("./admin.json");
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   storageBucket: process.env.BUCKET_URL
-// });
-// app.locals.bucket = admin.storage().bucket()
-// let db=admin.firestore();
 
 app.get('/', (req, res)=>{
     res.json({message: "Welcome to the default zone, please specify a path"})
