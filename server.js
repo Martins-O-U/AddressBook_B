@@ -16,7 +16,12 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'static', 'views'))
 app.set('view engine', 'ejs')
 
-app.use(cors())
+server.use(
+    cors({
+        origin: '*',
+        methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
+    })
+);
 app.use(helmet());
 
 app.use(compression())
