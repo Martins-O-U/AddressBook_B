@@ -1,73 +1,61 @@
 const router = require('express').Router();
-// const db = require('./ContactHelper')
+let admin = require("firebase-admin");
+let serviceAccount = require("../../admin.json");
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: process.env.BUCKET_URL
+});
 
-// router.get("/contactlist", (req, res) => {
-//   db.getPersons
-//       .then(parks => {
-//           res.status(200).json(parks)
-//       })
-//       .catch(error => {
-//           res.status(500).json({ message: "Oops!, Something went wrong. " + error.message})
-//       })
-// })
+let db=admin.firestore();
 
-// const express = require('express')
-// const router = express.Router()
-var admin = require("firebase-admin");
-let db = admin.firestore();
-
-
-// router.post('/update', async (req, res) => {
-//     let docRef = db.collection('user').doc(req.body.user.name)
-//     await docRef.update({
-//         email: req.body.user.email,
-//         password: req.body.user.password,
-//     })
-//     res.json({ message: 'done' });
-// })
-
-// module.exports = router
-
-router.post('/contactlist',async (req,res)=>{
-  let docRef=db.collection('user').doc(req.body.user.name)
-  await docRef.set({
+router.post('/create',async (req,res)=>{
+  let docRef=db.collection('user')
+  try {await docRef.add({
     email: req.body.user.email,
     password: req.body.user.password,
   });
-   res.json({message:'done'});
+   res.json({message: 'Contact added to list'});
+} catch (error) {
+    return res.status(500).json({ message: "Something went wrong" + error.message });
+
+  }
 })
 
-// router.post("/contactlist",  (req, res) => {
-//     let {name, phoneNumber, email, address, note} = req.body;
-//     if(name && phoneNumber){
-//         db.addPerson(req.body)
-//         .then(saved => {
-//             res.status(201).json(saved)
-//         })
-//         .catch(error => {
-//             res.status(500).json({message: "something went wrong:-. " + error.message});
-//         })
-//     }else{
-//       res.json({message: "Please provide all needed columns (name, phoneNumber)"})
-//     }
-// })
+router.get('/get', async (req, res) => {
+  let usr=[]
+  try{
+    const users = await db.collection('user').get()
+    if (users.docs.length > 0) {
+      for (const user of users.docs) {
+       usr.push(user.data())
+    }}
+    res.json(usr)
+  }  catch (error) {
+      return res.status(500).json({ message: "Something went wrong" + error.message });
+  }
 
+})
 
-// router.delete('/contactlist/:id',  (req, res) => {
-  
-//     db.removePerson(req.params.id)
-//     .then(deleted => {
-//       if (deleted) {
-//         res.json({ Message: `A park with ID ${req.params.id} got deleted` });
-//       } else {
-//         res.status(404).json({ message: 'Could not find a park with given id' });
-//       }
-//     })
-//     .catch(error => {
-//       res.status(500).json({ message: 'Failed to delete park ' + error.message});
-//     });
-// });
+router.patch('/update',async (req,res) => {
+  let docRef=db.collection('user').doc(req.body.user.name)
+  try{ await docRef.update({
+    email:req.body.user.email,
+    password:req.body.user.password,
+  })
+  res.json({message:'Edit on contact completed'});
+} catch (error) {
+  return res.status(500).json({ message: "Something went wrong" + error.message });
+}
+})
 
+router.delete('/delete',async (req,res) => {
+  try {
+    await db.collection('user').doc(req.body.user.name).delete()
+    res.json({message:'Contact has been deleted successfully'});
+  } catch (error) {
+      return res.status(500).json({ message: "Something went wrong" + error.message });
+  }
+})
 
 module.exports = router

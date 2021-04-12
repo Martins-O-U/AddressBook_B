@@ -1,12 +1,15 @@
+require('dotenv').config()
 const express=require('express')
-const port = process.env.PORT || 3000
-const compression=require('compression')
-const saltedMd5 = require('salted-md5')
+const port = process.env.PORT || 4100
+const compression = require('compression')
+// const saltedMd5 = require('salted-md5')
 const path = require('path');
 const app = express()
-const multer=require('multer')
-const upload=multer({storage: multer.memoryStorage()})
-require('dotenv').config()
+// const multer = require('multer')
+// const upload = multer({storage: multer.memoryStorage()})
+const contact = require('./Component/ContactList/ContactControl')
+
+
 app.use(express.urlencoded())
 app.use(express.json());
 
@@ -16,31 +19,22 @@ app.set('view engine', 'ejs')
 app.use(compression())
 app.use('/public', express.static(path.join(__dirname, 'static', 'public')))
 
-var admin = require("firebase-admin");
+app.use('/api', contact)
 
-var serviceAccount = require("./admin.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  // databaseURL: "https://fir-project-1-58a04.firebaseio.com",
-  storageBucket: process.env.BUCKET_URL
-});
+let admin = require("firebase-admin");
 app.locals.bucket = admin.storage().bucket()
-let db=admin.firestore();
 
-let a=db.collection('users')
-app.post('/data',async (req,res)=>{
-  let docRef=a.doc(req.body.user.name)
-  await docRef.set({
-    hobby: req.body.user.hobby,
-    age: req.body.user.age,
-  });
-  res.send('done');
+// let serviceAccount = require("./admin.json");
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   storageBucket: process.env.BUCKET_URL
+// });
+// app.locals.bucket = admin.storage().bucket()
+// let db=admin.firestore();
+
+app.get('/', (req, res)=>{
+    res.json({message: "Welcome to the default zone, please specify a path"})
 })
 
-app.post('/upload',upload.single('file'),async(req,res)=>{
-  const name = saltedMd5(req.file.originalname, 'SUPER-S@LT!')
-  const fileName = name + path.extname(req.file.originalname)
-  await app.locals.bucket.file(fileName).createWriteStream().end(req.file.buffer)
-  res.send('done');
-})
+module.exports = app;
