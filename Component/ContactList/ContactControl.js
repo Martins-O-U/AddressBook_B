@@ -13,7 +13,9 @@ router.post('/create',async (req,res)=>{
   let docRef=db.collection('user')
   try {await docRef.add({
     email: req.body.user.email,
-    password: req.body.user.password,
+    phoneNumber: req.body.user.phoneNumber,
+    name: req.body.user.name,
+    address: req.body.user.address
   });
    res.json({message: 'Contact added to list'});
 } catch (error) {
@@ -40,8 +42,10 @@ router.get('/get', async (req, res) => {
 router.patch('/update',async (req,res) => {
   let docRef=db.collection('user').doc(req.body.user.name)
   try{ await docRef.update({
-    email:req.body.user.email,
-    password:req.body.user.password,
+    email: req.body.user.email,
+    phoneNumber: req.body.user.phoneNumber,
+    name: req.body.user.name,
+    address: req.body.user.address
   })
   res.json({message:'Edit on contact completed'});
 } catch (error) {
