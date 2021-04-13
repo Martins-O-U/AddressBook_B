@@ -1,6 +1,7 @@
 const router = require('express').Router();
 let admin = require("firebase-admin");
 let serviceAccount = require("../../admin.json");
+const { v1: uuidv1 } = require('uuid')
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -16,7 +17,7 @@ router.post('/create',async (req,res)=>{
     phoneNumber: req.body.user.phoneNumber,
     name: req.body.user.name,
     address: req.body.user.address,
-    //password: req.body.user.password
+    id: uuidv1()
   });
    res.json({message: 'Contact added to list'});
 } catch (error) {
@@ -46,7 +47,8 @@ router.patch('/update',async (req,res) => {
     email: req.body.user.email,
     phoneNumber: req.body.user.phoneNumber,
     name: req.body.user.name,
-    address: req.body.user.address
+    address: req.body.user.address,
+    id: uuidv1()
   })
   res.json({message:'Edit on contact completed'});
 } catch (error) {
