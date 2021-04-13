@@ -15,7 +15,8 @@ router.post('/create',async (req,res)=>{
     email: req.body.user.email,
     phoneNumber: req.body.user.phoneNumber,
     name: req.body.user.name,
-    address: req.body.user.address
+    address: req.body.user.address,
+    //password: req.body.user.password
   });
    res.json({message: 'Contact added to list'});
 } catch (error) {
